@@ -2,6 +2,8 @@ package com.wangyifan.manhunt;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.WorldType;
 import org.bukkit.entity.Player;
 
 public class CompassController {
@@ -9,13 +11,14 @@ public class CompassController {
     public CompassController(ManHunt plugin) {
         this.plugin = plugin;
     }
-    public Player getNearestPlayer(Player player) {
+    public Player getNearestRunner(Player player) {
         double minDistance = 0.0f;
         Player ret = null;
         Location location = player.getLocation();
-        for (Player playerI : plugin.getServer().getOnlinePlayers()) {
+        for (Player playerI : Global.runnerList) {
             if (playerI == player) continue;
             if (playerI.getWorld() != player.getWorld()) continue;
+            if (playerI.getWorld().getName().toLowerCase().contains("nether")) continue;
             Location locationI = playerI.getLocation();
             double dist = location.distance(locationI);
             if (ret == null || dist < minDistance) {
@@ -26,19 +29,19 @@ public class CompassController {
         return ret;
     }
 
-    public void redirectCompassToNearestPlayer(Player player) {
-        Player target = getNearestPlayer(player);
+    public Player redirectCompassToNearestRunner(Player player) {
+        Player target = getNearestRunner(player);
         if (target != null) {
             player.setCompassTarget(target.getLocation());
         }
-
+        return target;
     }
 
     public void redirectCompassToStronghold(Player player) {
-        Player target = getNearestPlayer(player);
-        if (target != null) {
-            player.setCompassTarget(new Location(player.getWorld(), 0, 0, 0));
-        }
+        player.setCompassTarget(new Location(player.getWorld(), 0, 0, 0));
+    }
 
+    public void redirectCompass(Player player, Location location) {
+        player.setCompassTarget(location);
     }
 }

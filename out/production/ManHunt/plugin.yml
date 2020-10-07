@@ -1,9 +1,0 @@
-name: ManHunt
-description: A plugin of ManHunt.
-version: 1.0.0
-main: com.wangyifan.manhunt.ManHunt
-commands:
-  hunt:
-    description: "ManHunt game commands."
-    aliases:
-      - ht

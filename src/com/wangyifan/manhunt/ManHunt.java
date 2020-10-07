@@ -10,9 +10,10 @@ public class ManHunt extends JavaPlugin {
     @Override
     public void onEnable() {
         getLogger().info("ManHunt plugin enabled!\n");
-        Bukkit.getPluginManager().registerEvents(new EventsHandler(), this);
+        Bukkit.getPluginManager().registerEvents(new EventsHandler(this), this);
         Bukkit.getPluginCommand("hunt").setExecutor(new CommandManHunt(this));
         new onTick(this);
+        new Config(this);
     }
 
     @Override

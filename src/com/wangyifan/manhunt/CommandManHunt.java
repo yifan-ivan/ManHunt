@@ -1,9 +1,19 @@
 package com.wangyifan.manhunt;
 
+import org.bukkit.Effect;
+import org.bukkit.GameMode;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Ambient;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
+import org.bukkit.scheduler.BukkitRunnable;
+
+import java.util.Collection;
 
 public class CommandManHunt implements CommandExecutor {
     ManHunt plugin;
@@ -26,6 +36,7 @@ public class CommandManHunt implements CommandExecutor {
             case 1:
                 switch (strings[0]) {
                     case "status":
+                        player.sendMessage("§6Game in progress: " + Global.game);
                         StringBuilder s1 = new StringBuilder("§cHunters: ");
                         if (Global.hunterList.isEmpty()) {
                             s1.append("None");
@@ -59,6 +70,42 @@ public class CommandManHunt implements CommandExecutor {
                         break;
                     case "start":
                         // Start the game.
+                        new Config(plugin);
+                        Global.game = true;
+                        plugin.getServer().broadcastMessage("§6 Game Start!");
+                        for (Player player1 : Global.hunterList) {
+                            player1.setGameMode(GameMode.SURVIVAL);
+                            player1.getInventory().clear();
+                            Utils.removeAllPotionEffect(player1);
+                            if (Config.compassTrackingRunners) {
+                                player1.sendMessage("§aThe compass will track the nearest runner if you hold it in your main hand.");
+                                player1.getInventory().setItem(8, new ItemStack(Material.COMPASS));
+                            }
+                            if (Config.hunterSpeed > 0) {
+                                player1.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 100000, Config.hunterSpeed - 1));
+                            }
+                            if (Config.hunterResistance > 0) {
+                                player1.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 100000, Config.hunterSpeed - 1));
+                            }
+                        }
+                        for (Player player1 : Global.runnerList) {
+                            player1.setGameMode(GameMode.SURVIVAL);
+                            player1.getInventory().clear();
+                            Utils.removeAllPotionEffect(player1);
+                            if (Config.compassTrackingStronghold) {
+                                player1.sendMessage("§aThe compass will track the nearest stronghold if you hold it in your main hand.");
+                                player1.getInventory().setItem(8, new ItemStack(Material.COMPASS));
+                            }
+                            if (Config.runnerSpeed > 0) {
+                                player1.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 100000, Config.runnerSpeed - 1));
+                            }
+                            if (Config.runnerResistance > 0) {
+                                player1.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 100000, Config.runnerResistance - 1));
+                            }
+                        }
+                        for (Player player1 : Global.spectatorList) {
+                            player1.setGameMode(GameMode.SPECTATOR);
+                        }
                         break;
                 }
             case 2:
